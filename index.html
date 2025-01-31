@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTLT - Welcome</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/shared-styles.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+    <!-- Add Font Awesome for modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="index-page">
+    <!-- Animated background with particles -->
+    <div id="particles-js"></div>
+
+    <div class="hero-section">
+        <nav class="modern-navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="./media/uca-logo-lightmode.png" alt="UCA Logo" class="light-logo">
+                    <img src="./media/uca-logo-darkmode.png" alt="UCA Logo" class="dark-logo">
+                    <span class="logo-text">CTLT</span>
+                </div>
+                <div class="nav-buttons">
+                    <button id="themeToggle" class="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <a href="/login" class="nav-btn login-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Log In
+                    </a>
+                    <a href="/profile" class="nav-btn profile-btn" id="profileBtn" style="display: none;">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                    <a href="/register" class="nav-btn signup-btn" id="signupBtn">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </a>
+                    <a href="#" class="nav-btn logout-btn" id="logoutBtn" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="gradient-text slide-in-left">Welcome to CTLT Platform</h1>
+                <p class="slide-in-left delay-1">We're delighted to have you join our staff! Before you begin contributing to the growth of our university and students, we invite you to complete a brief training to help you get oriented and learn all the essential aspects of working here.</p>
+                <p class="slide-in-left delay-2">Questions? Contact us at: <a href="mailto:ctlt@ucentralasia.org" class="contact-email">ctlt@ucentralasia.org</a></p>
+                <button class="get-started" id="get-started-btn">Get Started</button>
+            </div>
+            <div class="hero-visual">
+                <div class="animated-letters">
+                    <div class="energy-field"></div>
+                    <span class="letter letter-c">C</span>
+                    <span class="letter letter-t1">T</span>
+                    <span class="letter letter-l">L</span>
+                    <span class="letter letter-t2">T</span>
+                    <div class="particles">
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Selection Modal -->
+    <div id="platformModal" class="platform-modal">
+        <div class="platform-modal-content">
+            <h2 class="gradient-text">Choose Your Platform</h2>
+            <div class="platform-buttons">
+                <button id="ctltBtn" class="platform-btn ctlt-theme" style="width: 300px;">
+                    <div class="platform-info">
+                        <span class="platform-name">Course Syllabus</span>
+                        <span class="platform-desc">Teaching & Learning Tools</span>
+                    </div>
+                </button>
+                <button id="moodleBtn" class="platform-btn moodle-theme" style="width: 300px;">
+                    <div class="platform-info">
+                        <span class="platform-name">Moodle Management</span>
+                        <span class="platform-desc">Course Management System</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Store 'index' as the previous page when on the main page
+            localStorage.setItem('previousPage', 'index');
+            
+            const getStartedBtn = document.getElementById('get-started-btn');
+            const platformModal = document.getElementById('platformModal');
+            const ctltBtn = document.getElementById('ctltBtn');
+            const moodleBtn = document.getElementById('moodleBtn');
+
+            // Add scroll animation for navbar
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.modern-navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Platform modal interactions
+            getStartedBtn.addEventListener('click', () => {
+                // Show platform selection modal for everyone
+                document.querySelector('.platform-modal').classList.add('show');
+            });
+
+            // Check login status and update UI
+            function checkLoginStatus() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const loginBtn = document.getElementById('loginBtn');
+                const profileBtn = document.getElementById('profileBtn');
+                const signupBtn = document.getElementById('signupBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+
+                if (isLoggedIn) {
+                    loginBtn.style.display = 'none';
+                    signupBtn.style.display = 'none';
+                    profileBtn.style.display = 'inline-block';
+                    logoutBtn.style.display = 'inline-block';
+                } else {
+                    loginBtn.style.display = 'inline-block';
+                    signupBtn.style.display = 'inline-block';
+                    profileBtn.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                }
+            }
+
+            // Handle logout
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                checkLoginStatus();
+            });
+
+            // Modify platform button click handlers
+            ctltBtn.addEventListener('click', () => {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    window.location.href = './html/ctlt.html';
+                } else {
+                    localStorage.setItem('selectedPlatform', 'ctlt');
+                    localStorage.setItem('redirectAfterLogin', '/html/ctlt.html');
+                    window.location.href = './html/login.html';
+                }
+            });
+
+            moodleBtn.addEventListener('click', () => {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    window.location.href = './html/moodle.html';
+                } else {
+                    localStorage.setItem('selectedPlatform', 'moodle');
+                    localStorage.setItem('redirectAfterLogin', '/html/moodle.html');
+                    window.location.href = './html/login.html';
+                }
+            });
+
+            platformModal.addEventListener('click', (e) => {
+                if (e.target === platformModal) {
+                    platformModal.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Add hover effect for platform buttons
+            const platformBtns = document.querySelectorAll('.platform-btn');
+            platformBtns.forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    btn.classList.add('hover');
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.classList.remove('hover');
+                });
+            });
+
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: ['#E77F00', '#9C27B0']
+                    },
+                    shape: {
+                        type: 'circle'
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: true
+                    },
+                    size: {
+                        value: 3,
+                        random: true
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#E77F00',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'grab'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'push'
+                        },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Check login status when page loads
+            checkLoginStatus();
+
+            const profileBtn = document.getElementById('profileBtn');
+            if (profileBtn) {
+                profileBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.setItem('previousPage', 'index');
+                    window.location.href = './html/profile.html';
+                });
+            }
+        });
+    </script>
+
+    <script src="./js/shared-theme.js"></script>
+
+    <!-- VOICEFLOW CHAT INTEGRATION SCRIPT -->
+    <script src="./js/config.js"></script>
+    <script>
+        (function(d, t) {
+            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            v.onload = function() {
+                try {
+                    if (typeof config === 'undefined') {
+                        console.error('Config not loaded');
+                        return;
+                    }
+                    
+                    window.voiceflow.chat.load({
+                        verify: {
+                            projectID: config.voiceflow.projectID,
+                            versionID: config.voiceflow.versionID,
+                            authorization: config.voiceflow.apiKey
+                        },
+                        url: config.voiceflow.runtimeUrl,
+                        headers: {
+                            'vf-project-id': config.voiceflow.projectID,
+                            'Authorization': config.voiceflow.apiKey
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing Voiceflow:', error);
+                }
+            }
+            v.src = "https://cdn.voiceflow.com/widget/bundle.mjs";
+            v.type = "text/javascript";
+            s.parentNode.insertBefore(v, s);
+        })(document, 'script');
+    </script>
+</body>
+
+</html>

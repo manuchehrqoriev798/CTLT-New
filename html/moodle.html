@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTLT Tutorial</title>
+    <link rel="stylesheet" href="../css/moodle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/shared-styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- Add this right after opening body tag -->
+    <div id="particles-js"></div>
+
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <div class="nav-top-row">
+            <div class="nav-buttons">
+                <a href="ctlt.html" class="nav-btn">Course Syllabus</a>
+                <a href="moodle.html" class="nav-btn active">Moodle Management</a>
+            </div>
+            <div class="profile-section">
+                <a href="../index.html" class="home-btn">
+                    <i class="fas fa-home" data-tooltip="Main Page"></i>
+                </a>
+                <div class="profile-dropdown">
+                    <i class="fas fa-user-circle profile-icon" id="profile-pic" data-tooltip="Profile"></i>
+                </div>
+            </div>
+        </div>
+        <div class="welcome-message" id="welcome-message"></div>
+    </div>
+
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <h2>Tutorial Steps</h2>
+            <ul class="steps-list">
+                <li>
+                    <div class="step-link" data-step="1">
+                        <span>1. Getting Started with Moodle</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="2">
+                        <span>2. Logging and Navigating UCA Moodle Website</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="3">
+                        <span>3. Taking Attendance</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="4">
+                        <span>4. Setting up Gradebook</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="5">
+                        <span>5. Adding Rubric into Assignment</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="step-content">
+                <h2 class="step-title" id="current-step-title"></h2>
+                <div id="current-step-description"></div>
+                <div id="videos-container" class="videos-container">
+                    <!-- Videos will be dynamically inserted here -->
+                </div>
+                <!-- Add button container here -->
+                <div class="completion-button-container">
+                    <button id="prev-step-btn" class="btn nav-step-btn">Previous</button>
+                    <button id="complete-step-btn" class="btn not-completed">Mark as Completed</button>
+                    <button id="next-step-btn" class="btn nav-step-btn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script>
+        // Step content data
+        const stepContent = {
+            1: {
+                title: "Getting Started with Moodle",
+                description: "Please watch the video below to learn how to log in and update your password on the Moodle platform.",
+                videos: [
+                    {
+                        title: "Getting started with Moodle: login and change password",
+                        url: "https://www.youtube.com/embed/eIDIlGDUVrQ"
+                    }
+                ]
+            },
+            2: {
+                title: "Logging and Navigating UCA Moodle Website",
+                description: "Please watch the video below to learn how to navigate through the UCA Moodle platform effectively.",
+                videos: [
+                    {
+                        title: "Logging and navigating in to UCA Moodle Website",
+                        url: "https://www.youtube.com/embed/eIDIlGDUVrQ"
+                    }
+                ]
+            },
+            3: {
+                title: "Taking Attendance",
+                description: "Please watch the video below to learn how to manage attendance in Moodle, including setting up attendance activities and recording student attendance.",
+                videos: [
+                    {
+                        title: "How to add class attendance activity in Moodle?",
+                        url: "https://www.youtube.com/embed/eIDIlGDUVrQ"
+                    },
+                    {
+                        title: "How you let students record their attendance?",
+                        url: "https://www.youtube.com/embed/cxVN6xpDdFw"
+                    },
+                    {
+                        title: "How to take attendance in Moodle?",
+                        url: "https://www.youtube.com/embed/SQpCTENYUwc"
+                    },
+                    {
+                        title: "How to change the attendance grades?",
+                        url: "https://www.youtube.com/embed/RZT3L9ZCTPY"
+                    }
+                ]
+            },
+            4: {
+                title: "Managing Gradebook",
+                description: "Please watch the video below to learn how to configure and manage the gradebook in Moodle.",
+                videos: [
+                    {
+                        title: "How to add a grade item or category?",
+                        url: "https://www.youtube.com/embed/uYlEdCTUUXQ"
+                    },
+                    {
+                        title: "How to setup Grade item weights?",
+                        url: "https://www.youtube.com/embed/6m3qrnglo6Q"
+                    },
+                    {
+                        title: "How do students see their grade report?",
+                        url: "https://www.youtube.com/embed/IZVDtA5W-oQ"
+                    }
+                ]
+            },
+            5: {
+                title: "Creating Rubrics",
+                description: "Please watch the video below to learn how to create and apply rubrics for assignments in Moodle.",
+                videos: [
+                    {
+                        title: "How to create and use rubrics",
+                        url: "https://www.youtube.com/embed/ux9HPJBab-A"
+                    }
+                ]
+            }
+        };
+
+        // Function to update button display
+        function updateButtonDisplay(stepNumber) {
+            const completeBtn = document.getElementById('complete-step-btn');
+            const prevBtn = document.getElementById('prev-step-btn');
+            const nextBtn = document.getElementById('next-step-btn');
+            
+            // Check if step is completed
+            const isCompleted = localStorage.getItem(`moodle-step-${stepNumber}-completed`) === 'true';
+            
+            // Update complete button
+            if (completeBtn) {
+                if (isCompleted) {
+                    completeBtn.textContent = 'Completed';
+                    completeBtn.classList.remove('not-completed');
+                    completeBtn.classList.add('completed');
+                    document.querySelector(`.step-link[data-step="${stepNumber}"]`)?.classList.add('completed');
+                } else {
+                    completeBtn.textContent = 'Mark as Completed';
+                    completeBtn.classList.remove('completed');
+                    completeBtn.classList.add('not-completed');
+                    document.querySelector(`.step-link[data-step="${stepNumber}"]`)?.classList.remove('completed');
+                }
+            }
+
+            // Always show previous button, but disable for first step
+            if (prevBtn) {
+                prevBtn.style.display = 'inline-block';
+                if (stepNumber <= 1) {
+                    prevBtn.disabled = true;
+                    prevBtn.style.opacity = '0.5';
+                    prevBtn.style.cursor = 'not-allowed';
+                } else {
+                    prevBtn.disabled = false;
+                    prevBtn.style.opacity = '1';
+                    prevBtn.style.cursor = 'pointer';
+                }
+            }
+            
+            // Update next button
+            if (nextBtn) {
+                const maxSteps = Object.keys(stepContent).length;
+                nextBtn.disabled = stepNumber >= maxSteps;
+                nextBtn.style.visibility = stepNumber >= maxSteps ? 'hidden' : 'visible';
+            }
+        }
+
+        // Function to load step content
+        function loadStepContent(stepNumber) {
+            const step = stepContent[stepNumber];
+            if (!step) return;
+
+            const stepTitle = document.getElementById('current-step-title');
+            const stepDescription = document.getElementById('current-step-description');
+            const videosContainer = document.getElementById('videos-container');
+            
+            // Update active state in sidebar
+            document.querySelectorAll('.step-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.step-link[data-step="${stepNumber}"]`)?.classList.add('active');
+            
+            if (stepTitle) stepTitle.textContent = `Step ${stepNumber}: ${step.title}`;
+            if (stepDescription) stepDescription.textContent = step.description;
+            
+            if (videosContainer) {
+                let content = '';
+                step.videos.forEach((video, index) => {
+                    content += `
+                        <div class="video-section">
+                            <h3 class="video-title">${video.title}</h3>
+                            <div class="video-container">
+                                <iframe id="step-video" 
+                                        width="100%" 
+                                        height="500"
+                                        src="${video.url}"
+                                        frameborder="0" 
+                                        allowfullscreen
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                </iframe>
+                            </div>
+                        </div>
+                    `;
+                });
+                videosContainer.innerHTML = content;
+            }
+
+            // Update button states
+            updateButtonDisplay(stepNumber);
+        }
+
+        // Add this function to initialize completion status for all steps
+        function initializeCompletionStatus() {
+            const totalSteps = Object.keys(stepContent).length;
+            for (let i = 1; i <= totalSteps; i++) {
+                const isCompleted = localStorage.getItem(`moodle-step-${i}-completed`) === 'true';
+                const stepLink = document.querySelector(`.step-link[data-step="${i}"]`);
+                if (stepLink) {
+                    if (isCompleted) {
+                        stepLink.classList.add('completed');
+                    } else {
+                        stepLink.classList.remove('completed');
+                    }
+                }
+            }
+        }
+
+        // Consolidate all event listeners into a single DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', () => {
+            const stepLinks = document.querySelectorAll('.step-link');
+            const prevBtn = document.getElementById('prev-step-btn');
+            const nextBtn = document.getElementById('next-step-btn');
+            const completeBtn = document.getElementById('complete-step-btn');
+            let currentStep = 1; // Default to first step
+
+            // Initialize completion status for all steps
+            initializeCompletionStatus();
+
+            // Load initial step
+            loadStepContent(currentStep);
+
+            // Add click handlers for step links
+            stepLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const stepNumber = parseInt(link.getAttribute('data-step'));
+                    currentStep = stepNumber;
+                    loadStepContent(stepNumber);
+                });
+            });
+
+            // Add click handlers for navigation buttons
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (currentStep > 1) {
+                        currentStep--;
+                        loadStepContent(currentStep);
+                    }
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    if (currentStep < Object.keys(stepContent).length) {
+                        currentStep++;
+                        loadStepContent(currentStep);
+                    }
+                });
+            }
+
+            // Add click handler for complete button
+            if (completeBtn) {
+                completeBtn.addEventListener('click', () => {
+                    const isCompleted = localStorage.getItem(`moodle-step-${currentStep}-completed`) === 'true';
+                    localStorage.setItem(`moodle-step-${currentStep}-completed`, !isCompleted);
+                    updateButtonDisplay(currentStep);
+                });
+            }
+
+            // Add this near the beginning of your DOMContentLoaded event handler
+            const profileIcon = document.querySelector('.profile-icon');
+            console.log('Profile icon found:', profileIcon); // Debug log
+            
+            if (profileIcon) {
+                profileIcon.style.cursor = 'pointer'; // Make it clear it's clickable
+                profileIcon.addEventListener('click', () => {
+                    console.log('Profile icon clicked in Moodle'); // Debug log
+                    localStorage.setItem('previousPage', 'moodle');
+                    window.location.href = 'profile.html';
+                });
+            }
+        });
+    </script>
+
+    <!-- VOICEFLOW CHAT INTEGRATION SCRIPT -->
+    <script src="../js/config.js"></script>
+    <script>
+        (function(d, t) {
+            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            v.onload = function() {
+                try {
+                    if (typeof config === 'undefined') {
+                        console.error('Config not loaded');
+                        return;
+                    }
+                    
+                    window.voiceflow.chat.load({
+                        verify: {
+                            projectID: config.voiceflow.projectID,
+                            versionID: config.voiceflow.versionID,
+                            authorization: config.voiceflow.apiKey
+                        },
+                        url: config.voiceflow.runtimeUrl,
+                        headers: {
+                            'vf-project-id': config.voiceflow.projectID,
+                            'Authorization': config.voiceflow.apiKey
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing Voiceflow:', error);
+                }
+            }
+            v.src = "https://cdn.voiceflow.com/widget/bundle.mjs";
+            v.type = "text/javascript";
+            s.parentNode.insertBefore(v, s);
+        })(document, 'script');
+    </script>
+
+    <!-- Add this script section -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+        import { firebaseConfig } from '../js/firebase-config.js';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            onAuthStateChanged(auth, (user) => {
+                if (!user || !user.emailVerified) {
+                    // User is not logged in or email not verified
+                    sessionStorage.setItem('redirectUrl', window.location.href);
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // User is logged in and verified
+                try {
+                    let UserInfo = JSON.parse(sessionStorage.getItem("user-info"));
+                    const welcomeMessage = document.getElementById("welcome-message");
+                    
+                    if (UserInfo) {
+                        welcomeMessage.textContent = `Welcome ${UserInfo.lastname} ${UserInfo.firstname} to UCA Faculty Onboarding - Moodle Management Section`;
+                    } else {
+                        welcomeMessage.textContent = 'Welcome to UCA Faculty Onboarding - Moodle Management Section';
+                    }
+                } catch (error) {
+                    console.error("Error setting welcome message:", error);
+                }
+            });
+        });
+    </script>
+
+    <!-- Add this right before the closing </body> tag -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: ['#E77F00', '#9C27B0']
+                },
+                shape: {
+                    type: 'circle'
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#9C27B0',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+</body>
+</html>

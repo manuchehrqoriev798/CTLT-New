@@ -1,0 +1,318 @@
+:root {
+    /* Light theme colors */
+    --bg-color: #ffffff;
+    --text-color: #263238;
+    --border-color: #dee2e6;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --input-bg: rgba(255, 255, 255, 0.1);
+    --input-text: #333333;
+    --input-border: rgba(231, 127, 0, 0.3);
+}
+
+[data-theme="dark"] {
+    /* Dark theme colors - updated for deeper blacks */
+    --bg-color: #000000;          /* Pure black background */
+    --text-color: #ffffff;
+    --border-color: #333333;      /* Darker border */
+    --card-bg: #121212;           /* Very dark gray, almost black */
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --input-bg: rgba(18, 18, 18, 0.9);  /* Darker input background */
+    --input-text: #ffffff;
+    --input-border: rgba(231, 127, 0, 0.5);
+}
+
+/* Update the theme toggle button styles */
+.theme-toggle {
+    background: transparent;
+    border: none;
+    color: white;  /* Default color for light theme */
+    cursor: pointer;
+    padding: 12px;
+    font-size: 1.8rem;
+    transition: transform 0.3s ease;
+    margin: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Add theme-specific colors for the toggle icon */
+[data-theme="light"] .theme-toggle {
+    color: black;  
+}
+
+[data-theme="dark"] .theme-toggle {
+    color: white;  /* White color in dark theme */
+}
+
+.theme-toggle i {
+    font-size: 1.8rem;  /* Explicitly set icon size */
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Add specific positioning for different layouts */
+.auth-container .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.top-bar .theme-toggle {
+    margin: 0 15px;
+}
+
+.nav-container .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+/* Apply theme colors */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.form-box, .card, .modal-content {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    transition: background-color 0.3s ease;
+}
+
+input {
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    border-color: var(--input-border) !important;
+}
+
+input::placeholder {
+    color: var(--input-text) !important;
+    opacity: 0.6;
+}
+
+/* Light theme - make login button text black */
+[data-theme="light"] .login-btn {
+    color: black;
+}
+
+/* Dark theme - keep login button text white */
+[data-theme="dark"] .login-btn {
+    color: white;
+}
+
+/* Logo container for CTLT and Moodle pages */
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    height: 91px;  /* Match nav-top-row height */
+}
+
+.small-logo {
+    width: 281px;  /* Adjusted to maintain aspect ratio (291:94 ≈ 281:91) */
+    height: 91px;  /* Match nav-top-row height */
+    object-fit: contain;
+}
+
+/* Logo visibility control */
+.light-logo {
+    display: block;
+}
+
+.dark-logo {
+    display: none;
+}
+
+[data-theme="dark"] .light-logo {
+    display: none;
+}
+
+[data-theme="dark"] .dark-logo {
+    display: block;
+}
+
+/* Add this to adjust the nav-top-row height */
+.nav-top-row {
+    height: 91px;  /* Set fixed height */
+    padding: 0 2rem !important;  /* Override any existing padding */
+    display: flex;
+    align-items: center;
+}
+
+/* Custom Alert Styles */
+.custom-alert {
+    display: none;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    width: auto;
+    min-width: 396px;  
+    max-width: 792px;  
+    background: rgba(18, 18, 18, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 11px;
+    padding: 20px 26px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    animation: slideDown 0.3s ease-out;
+    border-left: 5px solid;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Changed to space-between */
+    gap: 17px;
+}
+
+.custom-alert.success {
+    border-color: #4CAF50;
+    background: rgba(18, 18, 18, 0.95);
+}
+
+.custom-alert.error {
+    border-color: #E77F00;
+    background: rgba(18, 18, 18, 0.95);
+}
+
+.custom-alert.info {
+    border-color: #9C27B0;
+    background: rgba(18, 18, 18, 0.95);
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.alert-icon {
+    font-size: 26px;
+    background: linear-gradient(135deg, #E77F00, #9C27B0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    flex-shrink: 0;
+}
+
+.alert-message {
+    font-size: 17px;
+    line-height: 1.4;
+    color: white;
+    margin-right: 26px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.alert-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 21px;
+    padding: 0;
+    transition: color 0.3s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-left: auto; /* Added to ensure consistent positioning */
+}
+
+.alert-close:hover {
+    color: white;
+}
+
+/* Alert container to manage stacking */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.custom-alert {
+    pointer-events: auto;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+}
+
+/* Alert Icons Styling */
+.custom-alert i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.custom-alert.error i {
+    color: #ff3333; /* Bright red for error icon */
+    animation: errorShake 0.5s ease-in-out;
+}
+
+.custom-alert.success i {
+    color: #4CAF50; /* Green for success icon */
+}
+
+/* Animation for error icon */
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Alert Message Colors */
+.custom-alert.error .alert-message {
+    color: #ff3333; /* Matching text color for errors */
+    font-weight: 500;
+}
+
+.custom-alert.success .alert-message {
+    color: #4CAF50; /* Matching text color for success */
+    font-weight: 500;
+}
+
+/* Alert Icon Pulse Effect for Errors */
+.custom-alert.error i {
+    animation: errorPulse 2s infinite;
+}
+
+@keyframes errorPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+

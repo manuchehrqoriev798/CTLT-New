@@ -1,0 +1,191 @@
+/* Base styles */
+.profile-details {
+    padding: 25px;
+    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile header */
+.profile-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(231, 127, 0, 0.2);
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, #E77F00, #9C27B0);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar i {
+    font-size: 40px;
+    color: white;
+}
+
+/* Profile information */
+.profile-info-group {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.profile-info-group:hover {
+    background-color: rgba(231, 127, 0, 0.05);
+}
+
+.profile-info-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.profile-info-value {
+    font-size: 18px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Actions section */
+.profile-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.profile-action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-btn {
+    background: linear-gradient(45deg, #E77F00, #9C27B0);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 10px rgba(231, 127, 0, 0.2);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(231, 127, 0, 0.3);
+    background: linear-gradient(45deg, #9C27B0, #E77F00);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profile-details {
+        padding: 15px;
+    }
+    
+    .profile-info-value {
+        font-size: 16px;
+    }
+    
+    .profile-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .profile-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .delete-btn {
+        margin-left: 0;
+    }
+}
+
+/* Add these new styles */
+.profile-section {
+    margin: 25px 0;
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.profile-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.edit-info-form {
+    margin-top: 15px;
+}
+
+.edit-info-form .form-group {
+    margin-bottom: 15px;
+}
+
+.edit-info-form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(231, 127, 0, 0.2);
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.update-btn {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    margin: 10px 0;
+}
+
+.update-btn:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background: linear-gradient(45deg, #ff4444, #cc0000);
+    color: white;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background: linear-gradient(45deg, #cc0000, #ff4444);
+    transform: translateY(-2px);
+}
+
+/* Reset Password Button Styling */
+#forgotPassBtn {
+    background: linear-gradient(45deg, #9C27B0, #E77F00);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 10px rgba(156, 39, 176, 0.2);
+}
+
+#forgotPassBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+    background: linear-gradient(45deg, #E77F00, #9C27B0);
+}
+
+#forgotPassBtn i {
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+#forgotPassBtn:hover i {
+    transform: rotate(15deg);
+}

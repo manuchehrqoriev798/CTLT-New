@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTLT - Register</title>
+    <link rel="stylesheet" href="../css/register.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/shared-styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="auth-container">
+        <button id="themeToggle" class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        <div class="form-box">
+            <div class="form-header">
+                <img src="../media/uca-logo-lightmode.png" alt="UCA Logo" class="light-logo">
+                <img src="../media/uca-logo-darkmode.png" alt="UCA Logo" class="dark-logo">
+                <h2 class="gradient-text">Create Account</h2>
+                <p>Join the CTLT Platform</p>
+            </div>
+
+            <form id="MainForm" class="modern-form">
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="emailInp" placeholder="Email address" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="passwordInp" placeholder="Password" required>
+                            <span class="password-toggle-wrapper">
+                                <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="fas fa-key"></i>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="regCodeInp" placeholder="Registration Code" required>
+                            <span class="password-toggle-wrapper">
+                                <i class="fas fa-eye password-toggle" id="regCodeToggle"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="fnameInp" placeholder="First Name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="lnameInp" placeholder="Last Name" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn register-btn">
+                    <span>Create Account</span>
+                    <i class="fas fa-user-plus"></i>
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <p>Already have an account?</p>
+                <a href="login.html" class="gradient-text signin-btn">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <button id="themeToggle" class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        <!-- ... existing profile section content ... -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module">
+        import { firebaseConfig } from '../js/firebase-config.js';
+        import { validateRegistrationCode } from '../js/registration-config.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getDatabase, set, ref, child, get } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        let EmailInp = document.getElementById("emailInp");
+        let PassInp = document.getElementById("passwordInp");
+        let RegCodeInp = document.getElementById("regCodeInp");
+        let FnameInp = document.getElementById("fnameInp");
+        let LnameInp = document.getElementById("lnameInp");
+        let MainForm = document.getElementById("MainForm");
+
+        // Alert function
+        function showAlert(message, type = "error", callback = null) {
+            const alertContainer = document.querySelector('.alert-container') || createAlertContainer();
+            const alertElement = document.createElement('div');
+            alertElement.className = `custom-alert ${type}`;
+            
+            alertElement.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span class="alert-message">${message}</span>
+                <button class="alert-close">×</button>
+            `;
+
+            alertContainer.appendChild(alertElement);
+            alertElement.style.animation = 'slideDown 0.5s forwards';
+
+            const closeBtn = alertElement.querySelector('.alert-close');
+            closeBtn.addEventListener('click', () => {
+                alertElement.style.animation = 'slideUp 0.5s forwards';
+                setTimeout(() => {
+                    alertContainer.removeChild(alertElement);
+                    if (callback) callback();
+                }, 500);
+            });
+
+            // Auto close after 7 seconds (changed from 5 to 7 seconds)
+            setTimeout(() => {
+                if (alertElement.parentNode) {
+                    alertElement.style.animation = 'slideUp 0.5s forwards';
+                    setTimeout(() => {
+                        if (alertElement.parentNode) {
+                            alertContainer.removeChild(alertElement);
+                            if (callback) callback();
+                        }
+                    }, 500);
+                }
+            }, 7000); // Changed from 5000 to 7000 milliseconds
+        }
+
+        function createAlertContainer() {
+            const container = document.createElement('div');
+            container.className = 'alert-container';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        let RegisterUser = async (evt) => {
+            evt.preventDefault();
+
+            try {
+                // Quick initial validations (these are fast as they're client-side)
+                if (!EmailInp.value || !PassInp.value || !RegCodeInp.value || !FnameInp.value || !LnameInp.value) {
+                    showAlert("Please fill in all required fields.", "error");
+                    return;
+                }
+
+                // Email format validation (client-side)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(EmailInp.value)) {
+                    showAlert("Please enter a valid email address.", "error");
+                    return;
+                }
+
+                // Password and name length validations (client-side)
+                if (PassInp.value.length < 6) {
+                    showAlert("Password must be at least 6 characters long.", "error");
+                    return;
+                }
+
+                if (FnameInp.value.length < 2 || LnameInp.value.length < 2) {
+                    showAlert("First and last names must be at least 2 characters long.", "error");
+                    return;
+                }
+
+                // Single registration code check (removed duplicate check)
+                const isValidCode = await validateRegistrationCode(RegCodeInp.value);
+                if (!isValidCode) {
+                    showAlert("Invalid registration code. Please try again.", "error");
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = document.querySelector('.register-btn');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+                submitBtn.disabled = true;
+
+                // Create user and store data in parallel
+                const credentials = await createUserWithEmailAndPassword(auth, EmailInp.value, PassInp.value);
+                
+                // Store user data and send verification email in parallel
+                await Promise.all([
+                    set(ref(db, "UsersAuthList/" + credentials.user.uid), {
+                        firstname: FnameInp.value,
+                        lastname: LnameInp.value,
+                        email: EmailInp.value,
+                        regcode: RegCodeInp.value
+                    }),
+                    sendEmailVerification(credentials.user)
+                ]);
+                
+                // Store credentials for login page
+                sessionStorage.setItem('tempLoginEmail', EmailInp.value);
+                sessionStorage.setItem('tempLoginPass', PassInp.value);
+                
+                showAlert("Registration successful! Please verify your email.", "success", () => {
+                    window.location.href = "login.html?autofill=true";
+                });
+
+            } catch (error) {
+                let errorMessage;
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = "Email already registered. Please sign in instead.";
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = "Invalid email format.";
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = "Registration temporarily unavailable.";
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = "Password must be at least 6 characters.";
+                        break;
+                    default:
+                        errorMessage = "Registration failed. Please try again.";
+                }
+                showAlert(errorMessage, "error");
+            }
+        };
+
+        MainForm.addEventListener("submit", RegisterUser);
+
+        // Password toggle
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('passwordInp');
+
+        // Set password visible by default
+        passwordInput.setAttribute('type', 'text');
+        passwordToggle.classList.remove('fa-eye');
+        passwordToggle.classList.add('fa-eye-slash');
+
+        passwordToggle.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            passwordToggle.classList.toggle('fa-eye');
+            passwordToggle.classList.toggle('fa-eye-slash');
+        });
+
+        // Registration code toggle
+        const regCodeToggle = document.getElementById('regCodeToggle');
+        const regCodeInput = document.getElementById('regCodeInp');
+
+        // Set registration code visible by default
+        regCodeInput.setAttribute('type', 'text');
+        regCodeToggle.classList.remove('fa-eye');
+        regCodeToggle.classList.add('fa-eye-slash');
+
+        regCodeToggle.addEventListener('click', () => {
+            const type = regCodeInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            regCodeInput.setAttribute('type', type);
+            regCodeToggle.classList.toggle('fa-eye');
+            regCodeToggle.classList.toggle('fa-eye-slash');
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 60 },
+                    color: { value: ['#E77F00', '#9C27B0'] },
+                    shape: { type: 'circle' },
+                    opacity: {
+                        value: 0.3,
+                        random: true
+                    },
+                    size: {
+                        value: 4,
+                        random: true
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#9C27B0',
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 1.5,
+                        direction: 'none',
+                        random: true,
+                        straight: false,
+                        out_mode: 'bounce',
+                        bounce: true
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'bubble'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'repulse'
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        bubble: {
+                            distance: 200,
+                            size: 6,
+                            duration: 2,
+                            opacity: 0.8,
+                            speed: 3
+                        },
+                        repulse: {
+                            distance: 200,
+                            duration: 0.4
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+        });
+    </script>
+
+    <script src="../js/shared-theme.js"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        (function(d, t) {
+            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            v.onload = function() {
+                try {
+                    if (typeof config === 'undefined') {
+                        console.error('Config not loaded');
+                        return;
+                    }
+                    
+                    window.voiceflow.chat.load({
+                        verify: {
+                            projectID: config.voiceflow.projectID,
+                            versionID: config.voiceflow.versionID,
+                            authorization: config.voiceflow.apiKey
+                        },
+                        url: config.voiceflow.runtimeUrl,
+                        headers: {
+                            'vf-project-id': config.voiceflow.projectID,
+                            'Authorization': config.voiceflow.apiKey
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing Voiceflow:', error);
+                }
+            }
+            v.src = "https://cdn.voiceflow.com/widget/bundle.mjs";
+            v.type = "text/javascript";
+            s.parentNode.insertBefore(v, s);
+        })(document, 'script');
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

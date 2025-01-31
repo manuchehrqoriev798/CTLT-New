@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTLT Tutorial</title>
+    <link rel="stylesheet" href="../css/ctlt.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/shared-styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- Add this right after opening body tag -->
+    <div id="particles-js"></div>
+
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <div class="nav-top-row">
+            <div class="nav-buttons">
+                <a href="ctlt.html" class="nav-btn active">Course Syllabus</a>
+                <a href="moodle.html" class="nav-btn">Moodle Management</a>
+            </div>
+            <div class="profile-section">
+                <a href="../index.html" class="home-btn">
+                    <i class="fas fa-home" data-tooltip="Main Page"></i>
+                </a>
+                <div class="profile-dropdown">
+                    <i class="fas fa-user-circle profile-icon" id="profile-pic" data-tooltip="Profile"></i>
+                </div>
+            </div>
+        </div>
+        <div class="welcome-message" id="welcome-message"></div>
+    </div>
+
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <h2>Tutorial Steps</h2>
+            <ul class="steps-list">
+                <li>
+                    <div class="step-link" data-step="1">
+                        <span>1. Teaching and Learning at UCA</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="2">
+                        <span>2. Developing Your Course Syllabus</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="3">
+                        <span>3. Reviewing and Creating Your Course Learning Outcomes</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="4">
+                        <span>4. Course Grading and Assessment</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="5">
+                        <span>5. Course Calendar</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="6">
+                        <span>6. Course Approval </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="7">
+                        <span>7. Reviewing Your Course</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-link" data-step="8">
+                        <span>Additional Materials</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="step-content">
+                <h2 class="step-title" id="current-step-title"></h2>
+                <p class="step-description" id="current-step-description"></p>
+                <div class="video-container">
+                    <iframe id="step-video" 
+                            width="100%" 
+                            height="500"
+                            frameborder="0" 
+                            allowfullscreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                    </iframe>
+                </div>
+                <!-- Add button container here -->
+                <div class="completion-button-container">
+                    <button id="prev-step-btn" class="btn nav-step-btn">Previous</button>
+                    <button id="complete-step-btn" class="btn not-completed">Mark as Completed</button>
+                    <button id="next-step-btn" class="btn nav-step-btn">Next</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script>
+        // Step content data
+        const stepContent = {
+            1: {
+                title: "TEACHING AND LEARNING AT UCA",
+                description: "Introduction to UCA's teaching philosophy, pedagogical approaches, and the fundamental principles that guide effective teaching and learning in our academic environment.",
+                videoUrl: "https://www.youtube.com/embed/znpdjafG4CU"
+            },
+            2: {
+                title: "DEVELOPING YOUR COURSE SYLLABUS",
+                description: "Learn how to create a comprehensive course syllabus that effectively communicates course objectives, expectations, and policies while following UCA's guidelines and best practices.",
+                videoUrl: "https://www.youtube.com/embed/VT2ZOZ3rMG8"
+            },
+            3: {
+                title: "REVIEWING AND CREATING YOUR COURSE LEARNING OUTCOMES",
+                description: "Master the process of developing clear, measurable, and meaningful learning outcomes that align with program objectives and support student success.",
+                videoUrl: "https://www.youtube.com/embed/gqYtKVkYr_Y"
+            },
+            4: {
+                title: "COURSE GRADING AND ASSESSMENT",
+                description: "Explore the requirements for developing course assessment strategies.",
+                videoUrl: "https://www.youtube.com/embed/uRRG1zxNxLc"
+            },
+            5: {
+                title: "COURSE CALENDAR",
+                description: "Learn how to refer to the UCA Academic Calendar to create your course schedule.",
+                videoUrl: "https://www.youtube.com/embed/T3ugT0MiWzI"
+            },
+            6: {
+                title: "COURSE APPROVAL",
+                description: "Understanding the course approval process at UCA, including necessary documentation, review procedures, and timeline for getting your course approved.",
+                videoUrl: "https://www.youtube.com/embed/y-NiHRmFiWU"
+            },
+            7: {
+                title: "REVIEWING YOUR COURSE",
+                description: "Learn how to conduct a comprehensive review of your course, evaluate its effectiveness, and make data-driven improvements for future iterations.",
+                videoUrl: "https://www.youtube.com/embed/vFVO2VkOlpM"
+            },
+            8: {
+                title: "Download Resources",
+                description: "Access and download important resources and documents.",
+                content: `
+                    <!-- Add this file download section -->
+                    <div class="file-download-section">
+                        <h3>Available Resources</h3>
+                        <ul class="file-list">
+                            <li>
+                                Academic Policies 2020 
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/ACADEMIC POLICIES 2020 Reviewed  3.pdf')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                            <li>
+                                Description Learning Outcomes Review Tipsheet (May 2022)
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/Description-Learning-Outcomes-Review-Tipsheet-May-2022.pdf')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                            <li>
+                                In-progress Course Feedback Guidance (Dec 2024)
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/In-progress course feedback guidance_19_12_2024.pdf')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                            <li>
+                                AI in Course Assessments Recommendations (Nov 2024)
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/Recommendations_for_the_use_of_AI_in_course_assessments_05_11_24.docx')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                            <li>
+                                UCA Core Literacies Handbook (August 2023)
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/UCA Core Literacies Handbook_UCA_faculty_August 2023 1.docx')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                            <li>
+                                UCA Library Brief
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/UCA LIBRARY-Brief.docx')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                            <li>
+                                UCA Student Syllabus Template (Spring 2025)
+                                <button class="download-btn" onclick="downloadFile('../media/ctlt/UCA student syllabus template Spring 2025.docx')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        // Add this function to check video loading
+        function checkVideoUrl(url) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        console.error(`Video not found: ${url}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    console.log(`Video found: ${url}`);
+                })
+                .catch(error => {
+                    console.error('Error checking video:', error);
+                });
+        }
+
+        // Add this function outside of DOMContentLoaded
+        function downloadFile(path) {
+            console.log('Attempting to download:', path); // Debug log
+            const link = document.createElement('a');
+            link.href = path;
+            link.download = path.split('/').pop(); // Extract filename from path
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Add this function to initialize completion status for all steps
+        function initializeCompletionStatus() {
+            const totalSteps = Object.keys(stepContent).length;
+            for (let i = 1; i <= totalSteps; i++) {
+                const isCompleted = localStorage.getItem(`ctlt-step-${i}-completed`) === 'true';
+                const stepLink = document.querySelector(`.step-link[data-step="${i}"]`);
+                if (stepLink) {
+                    if (isCompleted) {
+                        stepLink.classList.add('completed');
+                    } else {
+                        stepLink.classList.remove('completed');
+                    }
+                }
+            }
+        }
+
+        // Consolidate all event listeners into a single DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', () => {
+            const stepLinks = document.querySelectorAll('.step-link');
+            const stepTitle = document.getElementById('current-step-title');
+            const stepDescription = document.getElementById('current-step-description');
+            const stepVideo = document.getElementById('step-video');
+            const prevBtn = document.getElementById('prev-step-btn');
+            const nextBtn = document.getElementById('next-step-btn');
+            const completeBtn = document.getElementById('complete-step-btn');
+            const profilePic = document.getElementById('profile-pic');
+            let currentStep = 1; // Default to first step
+
+            // Initialize completion status for all steps
+            initializeCompletionStatus();
+
+            // Define updateButtonDisplay function
+            function updateButtonDisplay(stepNumber) {
+                const isCompleted = localStorage.getItem(`ctlt-step-${stepNumber}-completed`) === 'true';
+                if (isCompleted) {
+                    completeBtn.textContent = 'Completed';
+                    completeBtn.classList.remove('not-completed');
+                    completeBtn.classList.add('completed');
+                    document.querySelector(`.step-link[data-step="${stepNumber}"]`).classList.add('completed');
+                } else {
+                    completeBtn.textContent = 'Mark as Completed';
+                    completeBtn.classList.remove('completed');
+                    completeBtn.classList.add('not-completed');
+                    document.querySelector(`.step-link[data-step="${stepNumber}"]`).classList.remove('completed');
+                }
+            }
+
+            // Function to load step content
+            function loadStepContent(stepNumber) {
+                const step = stepContent[stepNumber];
+                if (step) {
+                    // Remove active class from all steps
+                    document.querySelectorAll('.step-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    
+                    // Add active class to current step
+                    document.querySelector(`.step-link[data-step="${stepNumber}"]`).classList.add('active');
+                    
+                    // Update title and description
+                    stepTitle.textContent = step.title;
+                    stepDescription.textContent = step.description;
+                    
+                    // If it's step 8 (Additional Materials)
+                    if (stepNumber === 8) {
+                        // Hide video container
+                        document.querySelector('.video-container').style.display = 'none';
+                        
+                        // Insert the download content directly into the step-content div
+                        const stepContentDiv = document.querySelector('.step-content');
+                        stepContentDiv.innerHTML = `
+                            <h2 class="step-title">${step.title}</h2>
+                            <p class="step-description">${step.description}</p>
+                            ${step.content}
+                            <div class="completion-button-container">
+                                <button id="prev-step-btn" class="btn nav-step-btn">Previous</button>
+                                <button id="complete-step-btn" class="btn not-completed">Mark as Completed</button>
+                                <button id="next-step-btn" class="btn nav-step-btn">Next</button>
+                            </div>
+                        `;
+                        
+                        // Reattach event listeners for the buttons
+                        document.getElementById('prev-step-btn').addEventListener('click', () => {
+                            if (currentStep > 1) loadStepContent(currentStep - 1);
+                        });
+                        document.getElementById('next-step-btn').addEventListener('click', () => {
+                            if (currentStep < Object.keys(stepContent).length) loadStepContent(currentStep + 1);
+                        });
+                        document.getElementById('complete-step-btn').addEventListener('click', () => {
+                            const isCompleted = localStorage.getItem(`ctlt-step-${currentStep}-completed`) === 'true';
+                            localStorage.setItem(`ctlt-step-${currentStep}-completed`, !isCompleted);
+                            updateButtonDisplay(currentStep);
+                        });
+                    } else {
+                        // Regular step content with video
+                        document.querySelector('.video-container').style.display = 'block';
+                        if (step.videoUrl) {
+                            stepVideo.src = step.videoUrl;
+                            stepVideo.style.display = 'block';
+                        } else {
+                            stepVideo.style.display = 'none';
+                        }
+                    }
+                    
+                    currentStep = parseInt(stepNumber);
+                    updateNavigationButtons(currentStep);
+                    updateButtonDisplay(currentStep);
+                }
+            }
+
+            // Function to update navigation buttons state
+            function updateNavigationButtons(stepNumber) {
+                prevBtn.disabled = stepNumber <= 1;
+                nextBtn.disabled = stepNumber >= Object.keys(stepContent).length;
+            }
+
+            // Event Listeners
+            profilePic.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('previousPage', 'ctlt');
+                window.location.href = 'profile.html';
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    loadStepContent(currentStep - 1);
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentStep < Object.keys(stepContent).length) {
+                    loadStepContent(currentStep + 1);
+                }
+            });
+
+            stepLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const stepNumber = e.target.closest('.step-link').getAttribute('data-step');
+                    loadStepContent(stepNumber);
+                });
+            });
+
+            // Handle completion button clicks
+            completeBtn.addEventListener('click', () => {
+                const currentlyCompleted = completeBtn.classList.contains('completed');
+                
+                if (currentlyCompleted) {
+                    localStorage.setItem(`ctlt-step-${currentStep}-completed`, 'false');
+                } else {
+                    localStorage.setItem(`ctlt-step-${currentStep}-completed`, 'true');
+                }
+                updateButtonDisplay(currentStep);
+            });
+
+            // Initialize first step
+            loadStepContent(1);
+
+            // Particles.js configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: ['#E77F00', '#9C27B0']
+                    },
+                    shape: {
+                        type: 'circle'
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: true
+                    },
+                    size: {
+                        value: 3,
+                        random: true
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#E77F00',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'grab'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'push'
+                        },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Add this right after your video element initialization
+            stepVideo.setAttribute('playsinline', '');
+            stepVideo.setAttribute('controls', '');
+            stepVideo.style.width = '100%';
+            stepVideo.style.maxWidth = '800px';
+
+            // Add this debug log
+            console.log('Step Content:', stepContent);
+            
+            // Add this to your step click handler
+            document.querySelectorAll('.step-link').forEach(step => {
+                step.addEventListener('click', function() {
+                    const stepNumber = this.dataset.step;
+                    console.log('Clicked step:', stepNumber);
+                    
+                    if (stepContent[stepNumber]) {
+                        console.log('Content found for step:', stepContent[stepNumber]);
+                        
+                        const stepTitle = document.getElementById('current-step-title');
+                        const stepDescription = document.getElementById('current-step-description');
+                        const videoContainer = document.querySelector('.video-container');
+                        
+                        stepTitle.textContent = stepContent[stepNumber].title;
+                        stepDescription.textContent = stepContent[stepNumber].description;
+                        
+                        // Special handling for step 8
+                        if (stepNumber === '8') {
+                            // Hide video container
+                            if (videoContainer) {
+                                videoContainer.style.display = 'none';
+                            }
+                            
+                            // Remove any existing download section first
+                            const existingDownloadSection = document.querySelector('.file-download-section');
+                            if (existingDownloadSection) {
+                                existingDownloadSection.remove();
+                            }
+                            
+                            // Add the download content after the description
+                            stepDescription.insertAdjacentHTML('afterend', stepContent[stepNumber].content);
+                        } else {
+                            // Show video container for other steps
+                            if (videoContainer) {
+                                videoContainer.style.display = 'block';
+                            }
+                            
+                            // Remove any existing download section
+                            const downloadSection = document.querySelector('.file-download-section');
+                            if (downloadSection) {
+                                downloadSection.remove();
+                            }
+                            
+                            // Update video source if it exists
+                            const stepVideo = document.getElementById('step-video');
+                            if (stepContent[stepNumber].videoUrl) {
+                                stepVideo.src = stepContent[stepNumber].videoUrl;
+                            }
+                        }
+                    } else {
+                        console.log('No content found for step:', stepNumber);
+                    }
+                });
+            });
+
+            // Add this near the beginning of your DOMContentLoaded event handler
+            const profileIcon = document.querySelector('.profile-icon');
+            console.log('Profile icon found:', profileIcon); // Debug log
+            
+            if (profileIcon) {
+                profileIcon.style.cursor = 'pointer'; // Make it clear it's clickable
+                profileIcon.addEventListener('click', () => {
+                    console.log('Profile icon clicked in CTLT'); // Debug log
+                    localStorage.setItem('previousPage', 'ctlt');
+                    window.location.href = 'profile.html';
+                });
+            }
+        });
+
+        // Add download function
+        function downloadFile(filePath) {
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.download = filePath.split('/').pop();
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+
+    <!-- VOICEFLOW CHAT INTEGRATION SCRIPT -->
+    <script src="../js/config.js"></script>
+    <script>
+        (function(d, t) {
+            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            v.onload = function() {
+                window.voiceflow.chat.load({
+                    verify: {
+                        projectID: config.voiceflow.projectID,
+                        versionID: config.voiceflow.versionID,
+                        authorization: config.voiceflow.apiKey
+                    },
+                    url: config.voiceflow.runtimeUrl,
+                    headers: {
+                        'vf-project-id': config.voiceflow.projectID,
+                        'Authorization': config.voiceflow.apiKey
+                    }
+                });
+            }
+            v.src = "https://cdn.voiceflow.com/widget/bundle.mjs";
+            v.type = "text/javascript";
+            s.parentNode.insertBefore(v, s);
+        })(document, 'script');
+    </script>
+
+    <!-- Add this script section -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+        import { firebaseConfig } from '../js/firebase-config.js';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            onAuthStateChanged(auth, (user) => {
+                if (!user || !user.emailVerified) {
+                    // User is not logged in or email not verified
+                    sessionStorage.setItem('redirectUrl', window.location.href);
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // User is logged in and verified
+                try {
+                    let UserInfo = JSON.parse(sessionStorage.getItem("user-info"));
+                    const welcomeMessage = document.getElementById("welcome-message");
+                    
+                    if (UserInfo) {
+                        welcomeMessage.textContent = `Welcome ${UserInfo.lastname} ${UserInfo.firstname} to UCA Faculty Onboarding - Course Syllabus Section`;
+                    } else {
+                        welcomeMessage.textContent = 'Welcome to UCA Faculty Onboarding - Course Syllabus Section';
+                    }
+                } catch (error) {
+                    console.error("Error setting welcome message:", error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

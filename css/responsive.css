@@ -1,0 +1,187 @@
+/* Global Responsive Styles */
+@media screen and (max-width: 1200px) {
+    .main-container {
+        padding: 20px;
+    }
+
+    .content {
+        margin-left: 250px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .sidebar {
+        width: 250px;
+    }
+
+    .content {
+        margin-left: 250px;
+    }
+
+    .nav-buttons {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .nav-btn {
+        font-size: 0.9rem;
+    }
+
+    .platform-modal-content {
+        width: 90%;
+        max-width: 500px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .nav-top-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .profile-section {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .welcome-message {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .platform-buttons {
+        flex-direction: column;
+    }
+
+    .platform-btn {
+        width: 100% !important;
+    }
+
+    /* Add hamburger menu button */
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 1001;
+        background: var(--primary-color);
+        border: none;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Form responsiveness */
+    .form-box {
+        width: 90%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .auth-container {
+        padding: 10px;
+    }
+
+    /* Alert responsiveness */
+    .custom-alert {
+        min-width: auto;
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .nav-btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .profile-icon {
+        font-size: 2rem;
+    }
+
+    .step-title {
+        font-size: 1.5rem;
+    }
+
+    .step-description {
+        font-size: 1rem;
+    }
+
+    .video-container {
+        height: 200px;
+    }
+
+    .form-box {
+        padding: 15px;
+    }
+
+    .auth-btn {
+        width: 100%;
+    }
+
+    /* Modal responsiveness */
+    .modal-content {
+        width: 95%;
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    /* Hero section responsiveness */
+    .hero-section {
+        padding: 20px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .nav-top-row,
+    .particles-js-canvas-el,
+    .menu-toggle {
+        display: none !important;
+    }
+
+    .content {
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    * {
+        color: black !important;
+        background: transparent !important;
+    }
+} 

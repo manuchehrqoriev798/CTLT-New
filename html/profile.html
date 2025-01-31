@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTLT - Profile</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/shared-styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- Animated background with particles -->
+    <div id="particles-js"></div>
+
+    <div class="auth-container">
+        <button id="themeToggle" class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        <div class="form-box">
+            <div class="form-header">
+                <img src="../media/uca-logo-lightmode.png" alt="UCA Logo" class="light-logo">
+                <img src="../media/uca-logo-darkmode.png" alt="UCA Logo" class="dark-logo">
+                <h2 class="gradient-text">Profile</h2>
+                <p>Your Account Information</p>
+            </div>
+
+            <div id="profile-info">
+                <div class="profile-details">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-info-group">
+                        <div class="profile-info-label">First Name</div>
+                        <div class="profile-info-value" id="firstName">Loading...</div>
+                    </div>
+
+                    <div class="profile-info-group">
+                        <div class="profile-info-label">Last Name</div>
+                        <div class="profile-info-value" id="lastName">Loading...</div>
+                    </div>
+
+                    <div class="profile-info-group">
+                        <div class="profile-info-label">Email</div>
+                        <div class="profile-info-value" id="userEmail">Loading...</div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <div class="main-buttons">
+                            <button class="profile-action-btn" id="forgotPassBtn">
+                                <i class="fas fa-key"></i>
+                                Reset Password
+                            </button>
+                            
+                            <button class="profile-action-btn back-btn back-to-home">
+                                <i class="fas fa-home"></i>
+                                <span>Back to Home</span>
+                            </button>
+                        </div>
+
+                        <!-- New button that only shows when coming from CTLT or Moodle -->
+                        <button class="profile-action-btn back-btn back-to-previous" style="display: none;">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Previous Page</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this before the closing body tag -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 class="gradient-text">Reset Password</h3>
+            <p style="margin-bottom: 20px;">Enter your email address to receive a password reset link.</p>
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="resetEmailInp" placeholder="Email address" required>
+                </div>
+            </div>
+            <button id="sendResetLink" class="auth-btn">
+                <span>Send Reset Link</span>
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module">
+        import { firebaseConfig } from '../js/firebase-config.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80 },
+                color: { value: ['#E77F00', '#9C27B0'] },
+                shape: { type: 'circle' },
+                opacity: {
+                    value: 0.5,
+                    random: true
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#E77F00',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Get user info from session storage
+                const userInfo = JSON.parse(sessionStorage.getItem('user-info'));
+                const userCreds = JSON.parse(sessionStorage.getItem('user-creds'));
+
+                if (userInfo && userCreds) {
+                    document.getElementById('firstName').textContent = userInfo.firstname;
+                    document.getElementById('lastName').textContent = userInfo.lastname;
+                    document.getElementById('userEmail').textContent = userCreds.email;
+                } else {
+                    window.location.href = './login.html';
+                }
+
+                const previousPage = localStorage.getItem('previousPage');
+                const backToPreviousBtn = document.querySelector('.back-to-previous');
+                
+                // Show/hide the "Back to Previous Page" button based on previous page
+                if (previousPage === 'ctlt' || previousPage === 'moodle') {
+                    backToPreviousBtn.style.display = 'flex';
+                } else {
+                    backToPreviousBtn.style.display = 'none';
+                }
+
+                // Add click handlers for both back buttons
+                const backToHomeBtn = document.querySelector('.back-to-home');
+                backToHomeBtn.addEventListener('click', () => {
+                    window.location.href = '../index.html';
+                });
+
+                backToPreviousBtn.addEventListener('click', () => {
+                    const prevPage = localStorage.getItem('previousPage');
+                    if (prevPage === 'ctlt') {
+                        window.location.href = './ctlt.html';
+                    } else if (prevPage === 'moodle') {
+                        window.location.href = './moodle.html';
+                    }
+                });
+
+                const modal = document.getElementById("forgotPasswordModal");
+                const closeBtn = document.getElementsByClassName("close")[0];
+                const resetEmailInp = document.getElementById("resetEmailInp");
+                const sendResetLink = document.getElementById("sendResetLink");
+                const forgotPassBtn = document.getElementById("forgotPassBtn");
+
+                forgotPassBtn.onclick = () => {
+                    modal.style.display = "block";
+                    const userEmail = document.getElementById('userEmail').textContent;
+                    resetEmailInp.value = userEmail;
+                }
+
+                closeBtn.onclick = () => {
+                    modal.style.display = "none";
+                }
+
+                window.onclick = (event) => {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+                sendResetLink.onclick = () => {
+                    const email = resetEmailInp.value;
+                    if (!email) {
+                        alert("Please enter your email address");
+                        return;
+                    }
+
+                    sendPasswordResetEmail(auth, email)
+                        .then(() => {
+                            alert("Password reset link has been sent to your email");
+                            modal.style.display = "none";
+                        })
+                        .catch((error) => {
+                            alert(error.message);
+                            console.log(error.code);
+                            console.log(error.message);
+                        });
+                }
+            } catch (error) {
+                console.error('Error in profile page initialization:', error);
+            }
+        });
+    </script>
+    <script src="../js/shared-theme.js"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        (function(d, t) {
+            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            v.onload = function() {
+                try {
+                    if (typeof config === 'undefined') {
+                        console.error('Config not loaded');
+                        return;
+                    }
+                    
+                    window.voiceflow.chat.load({
+                        verify: { projectID: config.voiceflow.projectID },
+                        url: config.voiceflow.runtimeUrl,
+                        headers: {
+                            'vf-project-id': config.voiceflow.projectID,
+                            'Authorization': config.voiceflow.apiKey
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing Voiceflow:', error);
+                }
+            }
+            v.src = "https://cdn.voiceflow.com/widget/bundle.mjs";
+            v.type = "text/javascript";
+            s.parentNode.insertBefore(v, s);
+        })(document, 'script');
+    </script>
+
+    <style>
+    /* Updated styles to match index.html profile buttons */
+    .profile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .main-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .profile-action-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        min-width: 150px;
+    }
+
+    .profile-action-btn i {
+        font-size: 1.1rem;
+    }
+
+    #forgotPassBtn, .back-to-home {
+        background: linear-gradient(45deg, #E77F00, #9C27B0);
+        color: white;
+        box-shadow: 0 2px 10px rgba(231, 127, 0, 0.2);
+    }
+
+    .back-to-previous {
+        background: linear-gradient(45deg, #9C27B0, #E77F00);
+        color: white;
+        width: 100%;
+        max-width: 310px;
+        margin: 0 auto;
+        box-shadow: 0 2px 10px rgba(156, 39, 176, 0.2);
+    }
+
+    .profile-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    </style>
+</body>
+</html> 

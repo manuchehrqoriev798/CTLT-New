@@ -1,0 +1,24 @@
+{
+  "name": "ctlt-onboarding",
+  "version": "1.0.0",
+  "description": "## Overview An interactive educational web application designed to help users learn and navigate both CTLT and Moodle platforms. The project provides step-by-step tutorials, video content, and interactive elements to enhance the learning experience.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manuchehrqoriev798/test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manuchehrqoriev798/test/issues"
+  },
+  "homepage": "https://github.com/manuchehrqoriev798/test#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
