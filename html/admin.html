@@ -45,8 +45,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
         import { firebaseConfig } from '../js/firebase-config.js';
 
         const app = initializeApp(firebaseConfig);
@@ -173,10 +173,12 @@
 
             // Add event listeners for approve/revoke buttons
             const actionBtn = card.querySelector('.approve-btn, .revoke-btn');
-            actionBtn.addEventListener('click', () => {
-                const isApproving = actionBtn.classList.contains('approve-btn');
-                updateUserStatus(uid, isApproving);
-            });
+            if (actionBtn) {
+                actionBtn.addEventListener('click', () => {
+                    const isApproving = actionBtn.classList.contains('approve-btn');
+                    updateUserStatus(uid, isApproving);
+                });
+            }
 
             return card;
         }
@@ -184,6 +186,13 @@
         // Update user approval status
         async function updateUserStatus(uid, isApproving) {
             try {
+                // Check if user is an admin
+                const isAdmin = await checkAdminStatus(uid);
+                if (isAdmin) {
+                    showAlert("No need to modify admin account permissions", 'error');
+                    return;
+                }
+
                 await update(ref(db, `UsersAuthList/${uid}`), {
                     adminApproved: isApproving
                 });

@@ -1,3 +1,0 @@
-
-Also for production part here i have this issue or i dont know how to say this, is this okay or not, i host this on vercel and vercel shows the links as in my structure of the code like: @https://ctlt-onboarding.vercel.app/html/login.html @https://ctlt-onboarding.vercel.app/html/register.html @https://ctlt-onboarding.vercel.app/index.html @https://ctlt-onboarding.vercel.app/html/ctlt.html @https://ctlt-onboarding.vercel.app/html/moodle.html .. 
-I want to have links which do not show the strucutre of my code kind off how i can do it
