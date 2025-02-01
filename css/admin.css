@@ -1,0 +1,232 @@
+/* Admin Panel Styles */
+body {
+    background: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-header h1 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #E77F00, #9C27B0);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.users-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.user-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.user-card.pending {
+    border-left: 4px solid #E77F00;
+}
+
+.user-card.approved {
+    border-left: 4px solid #4CAF50;
+}
+
+.user-info h3 {
+    margin: 0 0 15px 0;
+    color: var(--text-color);
+}
+
+.user-info p {
+    margin: 8px 0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.approve-btn, .revoke-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.approve-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.revoke-btn {
+    background: #f44336;
+    color: white;
+}
+
+.approve-btn:hover, .revoke-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Search box styles */
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-box {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto 20px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 40px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    border-color: #E77F00;
+    box-shadow: 0 0 0 2px rgba(231, 127, 0, 0.1);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.clear-search:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+/* No results styles */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.no-results i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #ccc;
+}
+
+.no-results p {
+    font-size: 18px;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .users-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
+} 

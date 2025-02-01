@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CTLT - Admin Panel</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/shared-styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin Panel</h1>
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        
+        <div class="users-container">
+            <h2>Registered Users</h2>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name, email...">
+                    <button id="clearSearch" class="clear-search" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Users</button>
+                <button class="filter-btn" data-filter="pending">Pending Approval</button>
+                <button class="filter-btn" data-filter="approved">Approved</button>
+            </div>
+            <div id="usersList" class="users-list">
+                <!-- Users will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this container for alerts -->
+    <div class="alert-container"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+        import { firebaseConfig } from '../js/firebase-config.js';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentFilter = 'all';
+        let allUsers = {}; // Store all users for filtering
+
+        // Add search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            clearSearch.style.display = searchTerm ? 'flex' : 'none';
+            filterUsers();
+        });
+
+        clearSearch.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearch.style.display = 'none';
+            filterUsers();
+        });
+
+        // Check if user is admin
+        function checkAdminStatus(uid) {
+            const adminRef = ref(db, `admins/${uid}`);
+            return new Promise((resolve) => {
+                onValue(adminRef, (snapshot) => {
+                    resolve(snapshot.exists() && snapshot.val() === true);
+                }, { onlyOnce: true });
+            });
+        }
+
+        // Modified loadUsers function
+        function loadUsers() {
+            const usersRef = ref(db, 'UsersAuthList');
+            onValue(usersRef, (snapshot) => {
+                allUsers = snapshot.val() || {};
+                filterUsers();
+            });
+        }
+
+        // New filterUsers function
+        function filterUsers() {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '';
+            const searchTerm = searchInput.value.toLowerCase();
+
+            for (const uid in allUsers) {
+                const user = allUsers[uid];
+                if (shouldShowUser(user) && matchesSearch(user, searchTerm)) {
+                    const userCard = createUserCard(uid, user);
+                    usersList.appendChild(userCard);
+                }
+            }
+
+            // Show no results message if needed
+            if (usersList.children.length === 0) {
+                usersList.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>No users found matching your criteria</p>
+                    </div>
+                `;
+            }
+        }
+
+        // New matchesSearch function
+        function matchesSearch(user, searchTerm) {
+            if (!searchTerm) return true;
+            
+            const searchFields = [
+                user.firstname,
+                user.lastname,
+                user.email,
+                `${user.firstname} ${user.lastname}`,
+                user.department,
+                user.position
+            ].filter(Boolean); // Remove undefined/null values
+
+            return searchFields.some(field => 
+                field.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Filter users based on current filter
+        function shouldShowUser(user) {
+            switch (currentFilter) {
+                case 'pending':
+                    return !user.adminApproved;
+                case 'approved':
+                    return user.adminApproved;
+                default:
+                    return true;
+            }
+        }
+
+        // Create user card element
+        function createUserCard(uid, user) {
+            const card = document.createElement('div');
+            card.className = `user-card ${user.adminApproved ? 'approved' : 'pending'}`;
+            
+            card.innerHTML = `
+                <div class="user-info">
+                    <h3>${user.firstname} ${user.lastname}</h3>
+                    <p><i class="fas fa-envelope"></i> ${user.email}</p>
+                    <p><i class="fas fa-clock"></i> Registered: ${new Date(user.timestamp).toLocaleDateString()}</p>
+                    <p><i class="fas fa-check-circle"></i> Email Verified: ${user.emailVerified ? 'Yes' : 'No'}</p>
+                    <p><i class="fas fa-user-shield"></i> Admin Approved: ${user.adminApproved ? 'Yes' : 'No'}</p>
+                </div>
+                <div class="user-actions">
+                    ${!user.adminApproved ? 
+                        `<button class="approve-btn" data-uid="${uid}">
+                            <i class="fas fa-check"></i> Approve User
+                        </button>` : 
+                        `<button class="revoke-btn" data-uid="${uid}">
+                            <i class="fas fa-times"></i> Revoke Access
+                        </button>`
+                    }
+                </div>
+            `;
+
+            // Add event listeners for approve/revoke buttons
+            const actionBtn = card.querySelector('.approve-btn, .revoke-btn');
+            actionBtn.addEventListener('click', () => {
+                const isApproving = actionBtn.classList.contains('approve-btn');
+                updateUserStatus(uid, isApproving);
+            });
+
+            return card;
+        }
+
+        // Update user approval status
+        async function updateUserStatus(uid, isApproving) {
+            try {
+                await update(ref(db, `UsersAuthList/${uid}`), {
+                    adminApproved: isApproving
+                });
+                showAlert(`User ${isApproving ? 'approved' : 'revoked'} successfully`, 'success');
+            } catch (error) {
+                showAlert('Error updating user status', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Initialize admin page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const isAdmin = await checkAdminStatus(user.uid);
+                if (!isAdmin) {
+                    window.location.href = './login.html';
+                    return;
+                }
+                loadUsers();
+            } else {
+                window.location.href = './login.html';
+            }
+        });
+
+        // Update filter button event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                filterUsers();
+            });
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = './login.html';
+            });
+        });
+
+        // Add showAlert function
+        function showAlert(message, type = "error") {
+            const alertContainer = document.querySelector('.alert-container');
+            const alertElement = document.createElement('div');
+            alertElement.className = `custom-alert ${type}`;
+            
+            alertElement.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span class="alert-message">${message}</span>
+                <button class="alert-close">×</button>
+            `;
+
+            alertContainer.appendChild(alertElement);
+            alertElement.style.animation = 'slideDown 0.5s forwards';
+
+            const closeBtn = alertElement.querySelector('.alert-close');
+            closeBtn.addEventListener('click', () => {
+                alertElement.style.animation = 'slideUp 0.5s forwards';
+                setTimeout(() => {
+                    alertContainer.removeChild(alertElement);
+                }, 500);
+            });
+
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                if (alertElement.parentNode) {
+                    alertElement.style.animation = 'slideUp 0.5s forwards';
+                    setTimeout(() => {
+                        if (alertElement.parentNode) {
+                            alertContainer.removeChild(alertElement);
+                        }
+                    }, 500);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

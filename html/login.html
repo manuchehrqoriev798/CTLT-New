@@ -144,31 +144,49 @@
                 .then(async (credentials) => {
                     if (credentials.user.emailVerified) {
                         try {
-                            const snapshot = await get(child(dbref, "UsersAuthList/" + credentials.user.uid));
-                            if (snapshot.exists()) {
-                                sessionStorage.setItem("user-info", JSON.stringify({
-                                    firstname: snapshot.val().firstname,
-                                    lastname: snapshot.val().lastname
-                                }));
-                                sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
-                                localStorage.setItem('isLoggedIn', 'true');
+                            // Check if user is admin
+                            const adminSnapshot = await get(child(dbref, `admins/${credentials.user.uid}`));
+                            const isAdmin = adminSnapshot.exists();
 
-                                // Get the stored redirect URL
-                                const redirectUrl = localStorage.getItem('redirectAfterLogin');
-                                
-                                // Small delay to ensure storage is updated
-                                setTimeout(() => {
-                                    if (redirectUrl) {
-                                        // Clear the stored redirect URL
-                                        localStorage.removeItem('redirectAfterLogin');
-                                        // Use window.location.origin to get the base URL
-                                        const baseUrl = window.location.origin;
-                                        window.location.href = baseUrl + redirectUrl;
-                                    } else {
-                                        window.location.href = '../index.html';
-                                    }
-                                }, 100);
+                            // Check user approval status
+                            const userSnapshot = await get(child(dbref, `UsersAuthList/${credentials.user.uid}`));
+                            if (!userSnapshot.exists()) {
+                                showAlert("User account not found.", "error");
+                                return;
                             }
+
+                            const userData = userSnapshot.val();
+                            if (!userData.adminApproved && !isAdmin) {
+                                showAlert("Your account is pending admin approval.", "error");
+                                return;
+                            }
+
+                            // Store user info in session storage
+                            sessionStorage.setItem("user-info", JSON.stringify({
+                                firstname: userData.firstname,
+                                lastname: userData.lastname
+                            }));
+                            sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+                            localStorage.setItem('isLoggedIn', 'true');
+
+                            // Get the stored redirect URL
+                            const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                            
+                            // Small delay to ensure storage is updated
+                            setTimeout(() => {
+                                if (isAdmin) {
+                                    window.location.href = 'admin.html';
+                                } else if (redirectUrl) {
+                                    // Clear the stored redirect URL
+                                    localStorage.removeItem('redirectAfterLogin');
+                                    // Use window.location.origin to get the base URL
+                                    const baseUrl = window.location.origin;
+                                    window.location.href = baseUrl + redirectUrl;
+                                } else {
+                                    window.location.href = '../index.html';
+                                }
+                            }, 100);
+
                         } catch (error) {
                             let errorMessage;
                             switch (error.code) {
