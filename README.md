@@ -4,21 +4,6 @@
 An interactive educational web application designed to help users learn and navigate both CTLT and Moodle platforms. The project provides step-by-step tutorials, video content, and interactive elements to enhance the learning experience.
 
 ## ⚠️ Important Notes
-### Registration Information
-To create a new account, use the following registration code:
-
-```
-ADMIN123
-```
-
-
-### Development Status
-**This project is currently in development stage.**
-
-### Security Notice
-⚠️ The current database configuration and credentials shown in the code are for testing purposes only. 
-
-
 
 ## Technologies Used
 ### Frontend
